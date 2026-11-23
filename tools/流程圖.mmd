@@ -1,0 +1,12 @@
+flowchart LR
+    A["檢索 wiki<br/><small>讀 14 頁重點</small>"]:::ai --> B["覆蓋率關卡<br/><small>斷鏈（排除程式碼）・來源・孤兒頁</small>"]:::ck --> C[證據卡（平行）]:::ai --> D[大綱]:::ai --> E["人工確認<br/><small>只看順序與方向</small>"]:::hu
+    B -. 不足 → 停下 .-> X((停))
+    E -. 退回 → 修大綱 .-> D
+    E -. 或補檢索 .-> A
+    E --> F[逐頁稿]:::ai --> G["忠實度檢查<br/><small>48 處逐字比對</small>"]:::ck --> H[渲染 HTML]:::ai --> I["渲染檢查<br/><small>語法殘留・圖表字級・動畫結束・溢出</small>"]:::ck --> J[交付]:::ok
+    G -. 退回 → 只修那頁 .-> F
+    I -. 退回 → 逐頁稿 .-> F
+    classDef ai fill:#f6dcf1,stroke:#b77dcc;
+    classDef hu fill:#fde2d2,stroke:#ee8a58;
+    classDef ck fill:#e6e1e8,stroke:#8d8592;
+    classDef ok fill:#e5f4d8,stroke:#9cc77c;

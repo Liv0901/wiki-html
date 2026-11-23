@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="zh-Hant"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AI Agents 是什麼？</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>:root{--bg:#eef1f6;--paper:#ffffff;--ink:#16202e;--sub:#4a5668;--line:#d6dce6;--accent:#4f46e5;--accent2:#0ea5a4;--warm:#f59e0b;--rose:#e11d48;--soft:#eef0ff;--code:#0f172a;--codeink:#e2e8f0;
+--b0:#e0e7ff;--b1:#dbeafe;--b2:#dcfce7;--b3:#fef3c7;--b4:#fce7f3}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0b0f17;--paper:#141a26;--ink:#e8ecf3;--sub:#a3adbf;--line:#2a3344;--accent:#8b8cff;--accent2:#2dd4bf;--soft:#1d2240;--code:#0a0e16;--codeink:#dbe3ee;--b0:#25295a;--b1:#1b2d4f;--b2:#173a2a;--b3:#3d3014;--b4:#3d1a2d}}
+:root[data-theme="dark"]{--bg:#0b0f17;--paper:#141a26;--ink:#e8ecf3;--sub:#a3adbf;--line:#2a3344;--accent:#8b8cff;--accent2:#2dd4bf;--soft:#1d2240;--code:#0a0e16;--codeink:#dbe3ee;--b0:#25295a;--b1:#1b2d4f;--b2:#173a2a;--b3:#3d3014;--b4:#3d1a2d}
+*{box-sizing:border-box}html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;overflow:hidden}
+#viewport{position:fixed;inset:0;display:flex;align-items:center;justify-content:center}
+#stage{width:1280px;height:720px;position:relative;transform-origin:center center;flex:none}
+.slide{position:absolute;inset:0;background:var(--paper);border-radius:18px;box-shadow:0 20px 60px rgba(15,23,42,.12);padding:54px 72px 64px;display:none;flex-direction:column;overflow:hidden}
+.slide.active{display:flex;animation:in .35s ease}
+@keyframes in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.slide::before{content:"";position:absolute;left:0;top:0;bottom:0;width:8px;background:linear-gradient(var(--accent),var(--accent2))}
+.kicker{margin:0 0 6px;color:var(--accent);font-weight:700;letter-spacing:.08em;font-size:18px}
+h1{font-size:76px;margin:6px 0 22px;font-weight:900;line-height:1.1}
+h2{font-size:40px;margin:0 0 24px;font-weight:800;line-height:1.25}
+.pts{list-style:none;margin:0 0 16px;padding:0}
+.pt{position:relative;padding:12px 16px 12px 40px;margin-bottom:10px;font-size:23px;line-height:1.55;background:var(--soft);border-radius:12px}
+.pt::before{content:"";position:absolute;left:16px;top:24px;width:10px;height:10px;border-radius:50%;background:var(--accent)}
+.pts.big .pt{font-size:27px;padding:18px 20px 18px 46px}.pts.big .pt::before{top:32px;left:20px}
+.pts.tight .pt{font-size:20px;padding:10px 14px 10px 36px}.pts.tight .pt::before{top:20px;left:14px}
+.dense .pt{font-size:19px;padding:8px 14px 8px 34px;margin-bottom:7px}.dense .pt::before{top:17px;left:13px}
+.pt.mini{font-size:16px;padding:6px 8px;background:none;line-height:1.5}.pt.mini::before{display:none}
+.pt b{color:var(--accent)}
+.chip{display:inline-block;font-size:13px;font-weight:700;padding:1px 8px;border-radius:99px;background:var(--accent);color:#fff;text-decoration:none;vertical-align:2px;margin-left:2px}
+.from{position:absolute;left:72px;right:72px;bottom:20px;font-size:13px;color:var(--sub);border-top:1px dashed var(--line);padding-top:8px}
+.callout{margin-top:8px;padding:14px 20px;border-left:5px solid var(--warm);background:color-mix(in srgb,var(--warm) 12%,var(--paper));border-radius:8px;font-size:21px}
+.cols2{display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:start;flex:1;min-height:0}
+.cols2.wide-left{display:block;flex:none}
+.s-cover{justify-content:center;background:radial-gradient(1000px 500px at 85% 10%,var(--soft),var(--paper))}
+.cover .lead{font-size:28px;line-height:1.6;max-width:1050px;color:var(--ink);border-left:6px solid var(--accent2);padding-left:22px}
+.cover .hint{margin-top:44px;color:var(--sub);font-size:17px}
+.toc{columns:2;column-gap:48px;list-style:none;padding:0;margin:8px 0 0;font-size:25px}
+.toc li{break-inside:avoid;padding:13px 0;border-bottom:1px solid var(--line);display:flex;gap:16px;align-items:center}
+.toc .n{font-weight:900;color:var(--accent);font-size:22px;width:40px}
+.vs{display:flex;flex-direction:column;gap:16px}.vs-row{display:flex;gap:16px;align-items:center;font-size:23px;padding:18px;border-radius:14px;background:var(--soft)}
+.tag{font-weight:800;padding:6px 14px;border-radius:10px;font-size:19px;white-space:nowrap}.t1{background:var(--b3)}.t2{background:var(--b1)}.t3{background:var(--b2)}
+.dia{width:100%;height:auto;max-height:360px;margin-bottom:10px}
+.bx{stroke:var(--line);stroke-width:2}.b0{fill:var(--b0)}.b1{fill:var(--b1)}.b2{fill:var(--b2)}.b3{fill:var(--b3)}.b4{fill:var(--b4)}
+.bt{font-size:26px;font-weight:800;fill:var(--ink);text-anchor:middle}.bt.sm{font-size:22px}.bs{font-size:17px;fill:var(--sub);text-anchor:middle}
+.inv{fill:#fff}.core{fill:var(--accent)}.ln{stroke:var(--line);stroke-width:3}
+.ar{stroke:var(--sub);stroke-width:3;fill:none}.ar.thick{stroke:var(--accent)}.ar.dash{stroke-dasharray:6 6}.ahf{fill:var(--sub)}
+.lbl{font-size:18px;fill:var(--accent);font-weight:700}
+.code{background:var(--code);color:var(--codeink);padding:22px 24px;border-radius:14px;font-size:17px;line-height:1.6;margin:0;white-space:pre-wrap;font-family:ui-monospace,"Cascadia Code",Consolas,monospace}
+.tbl{border-collapse:collapse;width:100%;font-size:18px}.tbl th{background:var(--soft);text-align:left;padding:8px 12px;color:var(--accent)}.tbl td{padding:8px 12px;border-bottom:1px solid var(--line)}
+.flow{display:flex;align-items:stretch;gap:10px;margin-bottom:26px}.step{flex:1;background:var(--b2);border-radius:14px;padding:18px;font-size:21px;font-weight:700;text-align:center;display:flex;flex-direction:column;justify-content:center}.step small{font-weight:400;color:var(--sub);font-size:15px}.arr{align-self:center;font-size:28px;color:var(--sub)}
+.steps{margin:0;padding-left:0;list-style:none;counter-reset:s}.steps li{counter-increment:s;position:relative;padding:14px 16px 14px 60px;margin-bottom:12px;background:var(--soft);border-radius:12px;font-size:20px;line-height:1.5}.steps li::before{content:counter(s);position:absolute;left:16px;top:12px;width:30px;height:30px;border-radius:50%;background:var(--accent2);color:#fff;font-weight:800;text-align:center;line-height:30px}
+.cards{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;flex:1;min-height:0}.card{border-radius:14px;padding:14px;border-top:6px solid var(--accent);background:var(--soft)}.card .ct{font-weight:800;font-size:20px;margin-bottom:6px}
+.c1{border-color:var(--accent2)}.c2{border-color:var(--warm)}.c3{border-color:var(--rose)}.c4{border-color:#8b5cf6}
+.gl{display:flex;flex-direction:column;gap:14px}.glc{background:var(--soft);border-radius:14px;padding:18px 20px;display:flex;flex-direction:column;gap:6px;font-size:19px}.glc b{font-size:23px;color:var(--accent)}
+.stat{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border-radius:18px;padding:30px;text-align:center}.stat .num{font-size:72px;font-weight:900;line-height:1.1}.stat .cap{font-size:19px;margin-bottom:22px;opacity:.95}
+.quiz{display:flex;flex-direction:column;gap:12px}.q{background:var(--soft);border-radius:12px;padding:14px 20px;font-size:22px}.q summary{cursor:pointer;font-weight:700}.q[open] summary{color:var(--accent)}.q .pts{margin:10px 0 0}.q .pt{background:var(--paper);font-size:19px}
+.takeaway{font-size:27px;line-height:1.6;padding-left:34px}.takeaway li{margin-bottom:18px}
+.srcs{columns:2;column-gap:36px;font-size:14.5px;line-height:1.5;padding-left:20px;margin:0}.srcs li{break-inside:avoid;margin-bottom:6px}.srcs a{color:var(--accent)}
+#bar{position:fixed;bottom:14px;right:18px;display:flex;gap:8px;align-items:center;background:var(--paper);border:1px solid var(--line);border-radius:99px;padding:4px 8px;z-index:5;box-shadow:0 4px 14px rgba(0,0,0,.08)}
+#bar button{border:0;background:none;color:var(--ink);font-size:22px;width:36px;height:36px;border-radius:50%;cursor:pointer}#bar button:hover{background:var(--soft)}#count{font-size:14px;color:var(--sub);min-width:56px;text-align:center}
+#progress{position:fixed;left:0;right:0;top:0;height:4px;z-index:5}#progress i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));width:0;transition:width .3s}
+body.overview{overflow:auto}body.overview #viewport{position:static;display:block;padding:24px}body.overview #stage{transform:none!important;width:auto;height:auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:18px}
+body.overview .slide{display:flex;position:relative;inset:auto;width:1280px;height:720px;zoom:.25;cursor:pointer;animation:none}body.overview .slide:hover{outline:12px solid var(--accent)}
+@media (max-width:600px){#bar{right:50%;transform:translateX(50%)}}
+.dia.tall{max-height:540px}
+</style></head>
+<body>
+<div id="viewport"><div id="stage">
+<section class="slide s-cover" data-wiki="index:一句話總結" aria-label="第 1 頁"><div class="cover">
+  <p class="kicker">第十週｜以 LLM Wiki 為知識庫的教學簡報</p>
+  <h1>AI Agents 是什麼？</h1>
+  <p class="lead" data-ref="index:oneliner">AI Agent ＝ 以 LLM 為大腦，在一個「思考 → 行動 → 觀察」的迴圈中，自己決定要用哪些工具、記住什麼、下一步做什麼，直到完成目標的系統。</p>
+  <p class="hint">按 → 或空白鍵換頁　·　O 看全部頁面　·　F 全螢幕</p>
+</div><footer class="from">📖 Wiki 出處：index.md › 重點 一句話總結</footer></section>
+<section class="slide " data-wiki="index:閱讀路線" aria-label="第 2 頁"><p class="kicker">今天的路線</p><h2>學習大綱</h2><ol class="toc"><li><span class="n">01</span><span data-title="definition">什麼是 AI Agent？</span></li><li><span class="n">02</span><span data-title="components">核心元件</span></li><li><span class="n">03</span><span data-title="agent-loop">Agent Loop 與 ReAct</span></li><li><span class="n">04</span><span data-title="planning">規劃與反思</span></li><li><span class="n">05</span><span data-title="tool-use">工具使用</span></li><li><span class="n">06</span><span data-title="memory">記憶</span></li><li><span class="n">07</span><span data-title="workflows-vs-agents">Workflow 與 Agent 的設計模式</span></li><li><span class="n">08</span><span data-title="multi-agent">多代理人系統</span></li><li><span class="n">09</span><span data-title="evaluation">評估</span></li><li><span class="n">10</span><span data-title="risks">風險與防護</span></li></ol><footer class="from">📖 Wiki 出處：index.md › 重點 閱讀路線</footer></section>
+<section class="slide " data-wiki="definition:1,definition:2" aria-label="第 3 頁"><p class="kicker">01 · 定義</p><h2>什麼是 AI Agent？</h2>
+<ul class="pts big"><li class="pt"><span class="txt" data-ref="definition:1"><b>經典定義：</b>Agent 是任何能透過感測器感知環境、並透過致動器對環境採取行動的東西。</span> <a class="chip" href="#src" data-cite="S14" title="Russell &amp; Norvig，《Artificial Intelligence: A Modern Approach》第 4 版，2020">S14</a></li><li class="pt"><span class="txt" data-ref="definition:2"><b>LLM Agent：</b>由 LLM 動態主導自己的流程與工具使用，自己決定如何完成任務。</span> <a class="chip" href="#src" data-cite="S1" title="Anthropic（Schluntz &amp; Zhang），〈Building effective agents〉，2024-12">S1</a></li></ul>
+<div class="callout">💡 關鍵字：<b>自己決定</b>流程與工具 —— 這是 Agent 和一般程式最大的不同。</div><footer class="from">📖 Wiki 出處：definition.md › 重點 1、2</footer></section>
+<section class="slide " data-wiki="definition:3,definition:4" aria-label="第 4 頁"><p class="kicker">01 · 定義</p><h2>Agent、聊天機器人、Workflow 差在哪？</h2>
+<div class="cols2">
+  <ul class="pts"><li class="pt"><span class="txt" data-ref="definition:3"><b>與 Workflow 的差別：</b>Workflow 是由程式碼預先寫好路徑來串接 LLM 與工具；Agent 則是由模型在執行中決定下一步。</span> <a class="chip" href="#src" data-cite="S1" title="Anthropic（Schluntz &amp; Zhang），〈Building effective agents〉，2024-12">S1</a></li><li class="pt"><span class="txt" data-ref="definition:4"><b>與聊天機器人的差別：</b>聊天機器人多半一問一答；Agent 會連續多步行動、使用工具並根據環境回饋修正。</span> <a class="chip" href="#src" data-cite="S1" title="Anthropic（Schluntz &amp; Zhang），〈Building effective agents〉，2024-12">S1</a><a class="chip" href="#src" data-cite="S2" title="Yao et al.，〈ReAct: Synergizing Reasoning and Acting in Language Models〉，ICLR 2023">S2</a></li></ul>
+  <div class="vs">
+    <div class="vs-row"><span class="tag t1">聊天機器人</span><span>一問 → 一答</span></div>
+    <div class="vs-row"><span class="tag t2">Workflow</span><span>A → B → C（路徑寫死）</span></div>
+    <div class="vs-row"><span class="tag t3">Agent</span><span>想 → 做 → 看 → 再想…（模型決定）</span></div>
+  </div>
+</div><footer class="from">📖 Wiki 出處：definition.md › 重點 3、4</footer></section>
+<section class="slide " data-wiki="workflows-vs-agents:1,definition:5" aria-label="第 5 頁"><p class="kicker">01 · 定義</p><h2>自主程度是一條光譜</h2>
+<svg viewBox="0 0 1240 230" class="dia" role="img" aria-label="自主程度光譜">
+<defs><marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="ahf"/></marker></defs>
+<g transform="translate(40,70)"><rect width="250" height="90" rx="14" class="bx b0"/><text x="125" y="54" class="bt">單次 LLM 呼叫</text></g><g transform="translate(340,70)"><rect width="250" height="90" rx="14" class="bx b1"/><text x="125" y="54" class="bt">強化型 LLM</text></g><g transform="translate(640,70)"><rect width="250" height="90" rx="14" class="bx b2"/><text x="125" y="54" class="bt">Workflow</text></g><g transform="translate(940,70)"><rect width="250" height="90" rx="14" class="bx b3"/><text x="125" y="54" class="bt">自主 Agent</text></g><path d="M290 115 h45" class="ar" marker-end="url(#ah)"/><path d="M590 115 h45" class="ar" marker-end="url(#ah)"/><path d="M890 115 h45" class="ar" marker-end="url(#ah)"/>
+<path d="M40 200 H1190" class="ar thick" marker-end="url(#ah)"/>
+<text x="40" y="190" class="lbl" text-anchor="start">彈性、成本 ↑　可預測性 ↓</text></svg>
+<ul class="pts"><li class="pt"><span class="txt" data-ref="workflows-vs-agents:1">先找最簡單的解法，只在必要時增加複雜度；很多情況下，單次 LLM 呼叫加上檢索與範例就夠了。</span> <a class="chip" href="#src" data-cite="S1" title="Anthropic（Schluntz &amp; Zhang），〈Building effective agents〉，2024-12">S1</a></li><li class="pt"><span class="txt" data-ref="definition:5">Agent 會帶來更高的延遲與成本，只有在任務開放、步驟無法事先預測時才值得使用。</span> <a class="chip" href="#src" data-cite="S1" title="Anthropic（Schluntz &amp; Zhang），〈Building effective agents〉，2024-12">S1</a></li></ul><footer class="from">📖 Wiki 出處：workflows-vs-agents.md › 重點 1　definition.md › 重點 5</footer></section>
+<section class="slide " data-wiki="components:1,components:2,components:3,components:4" aria-label="第 6 頁"><p class="kicker">02 · 核心元件</p><h2>核心元件：大腦 + 三種能力</h2>
+<div class="cols2 wide-left">
+<svg viewBox="0 0 1240 330" class="dia" role="img" aria-label="Agent 核心元件">
+<g><line x1="620" y1="225" x2="160" y2="185" class="ln"/><rect x="30" y="150" width="260" height="76" rx="14" class="bx b1"/><text x="160" y="183" class="bt">規劃</text><text x="160" y="208" class="bs">待辦清單與檢討會</text></g><g><line x1="620" y1="225" x2="620" y2="75" class="ln"/><rect x="490" y="40" width="260" height="76" rx="14" class="bx b2"/><text x="620" y="73" class="bt">記憶</text><text x="620" y="98" class="bs">筆記本與檔案櫃</text></g><g><line x1="620" y1="225" x2="1080" y2="185" class="ln"/><rect x="950" y="150" width="260" height="76" rx="14" class="bx b3"/><text x="1080" y="183" class="bt">工具</text><text x="1080" y="208" class="bs">手腳：查資料、寫檔、下指令</text></g><circle cx="620" cy="245" r="70" class="core"/><text x="620" y="240" class="bt inv">LLM</text><text x="620" y="268" class="bs inv">大腦</text></svg>
+</div>
+<ul class="pts tight"><li class="pt"><span class="txt" data-ref="components:2"><b>規劃：</b>把大任務拆成小目標，並對過去的行動做反思與修正。</span> <a class="chip" href="#src" data-cite="S3" title="Lilian Weng，〈LLM Powered Autonomous Agents〉，2023-06">S3</a></li><li class="pt"><span class="txt" data-ref="components:3"><b>記憶：</b>短期記憶是上下文（in-context）中的內容；長期記憶通常存在外部向量資料庫，需要時再檢索。</span> <a class="chip" href="#src" data-cite="S3" title="Lilian Weng，〈LLM Powered Autonomous Agents〉，2023-06">S3</a></li><li class="pt"><span class="txt" data-ref="components:4"><b>工具使用：</b>呼叫外部 API 取得模型權重裡沒有的資訊，例如即時資料、程式執行、專有資料庫。</span> <a class="chip" href="#src" data-cite="S3" title="Lilian Weng，〈LLM Powered Autonomous Agents〉，2023-06">S3</a></li></ul><footer class="from">📖 Wiki 出處：components.md › 重點 1、2、3、4</footer></section>
+<section class="slide " data-wiki="agent-loop:1,agent-loop:4,agent-loop:5" aria-label="第 7 頁"><p class="kicker">03 · Agent Loop</p><h2>Agent 的心跳：想 → 做 → 看</h2>
+<div class="cols2">
+<svg viewBox="0 0 560 470" class="dia tall" role="img" aria-label="Agent 迴圈">
+<defs><marker id="ah2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="ahf"/></marker></defs>
+<rect x="190" y="10" width="180" height="50" rx="25" class="bx b0"/><text x="280" y="42" class="bt">目標</text>
+<path d="M280 62 V95" class="ar" marker-end="url(#ah2)"/>
+<rect x="170" y="100" width="220" height="70" rx="14" class="bx b1"/><text x="280" y="132" class="bt">Thought</text><text x="280" y="156" class="bs">思考下一步</text>
+<rect x="340" y="250" width="200" height="70" rx="14" class="bx b2"/><text x="440" y="282" class="bt">Action</text><text x="440" y="306" class="bs">呼叫工具</text>
+<rect x="20" y="250" width="200" height="70" rx="14" class="bx b3"/><text x="120" y="282" class="bt">Observation</text><text x="120" y="306" class="bs">環境回傳結果</text>
+<path d="M370 172 Q440 200 440 245" class="ar" marker-end="url(#ah2)"/>
+<path d="M338 290 H226" class="ar" marker-end="url(#ah2)"/>
+<path d="M120 248 Q120 200 190 172" class="ar" marker-end="url(#ah2)"/>
+<path d="M120 322 V380" class="ar dash" marker-end="url(#ah2)"/>
+<rect x="20" y="385" width="250" height="66" rx="14" class="bx b4"/><text x="145" y="414" class="bt sm">完成 / 達上限</text><text x="145" y="438" class="bs">→ 輸出答案</text>
+</svg>
+<ul class="pts tight"><li class="pt"><span class="txt" data-ref="agent-loop:1">ReAct 讓 LLM 交錯產生「推理軌跡」與「任務行動」，推理幫助擬定與更新計畫，行動則從外部取得新資訊。</span> <a class="chip" href="#src" data-cite="S2" title="Yao et al.，〈ReAct: Synergizing Reasoning and Acting in Language Models〉，ICLR 2023">S2</a></li><li class="pt"><span class="txt" data-ref="agent-loop:4">實務上，Agent 在每一步都要從環境取得「真實狀態」（例如工具結果或程式執行結果）來判斷進度。</span> <a class="chip" href="#src" data-cite="S1" title="Anthropic（Schluntz &amp; Zhang），〈Building effective agents〉，2024-12">S1</a></li><li class="pt"><span class="txt" data-ref="agent-loop:5">必須設定停止條件（例如最大迭代次數），避免 Agent 無限循環。</span> <a class="chip" href="#src" data-cite="S1" title="Anthropic（Schluntz &amp; Zhang），〈Building effective agents〉，2024-12">S1</a></li></ul>
+</div><footer class="from">📖 Wiki 出處：agent-loop.md › 重點 1、4、5</footer></section>
+<section class="slide " data-wiki="agent-loop:2,agent-loop:3" aria-label="第 8 頁"><p class="kicker">03 · Agent Loop</p><h2>ReAct 實際長什麼樣子？</h2>
+<div class="cols2">
+<pre class="code" data-code="agent-loop:2">Thought 1: 我要找出 ReAct 論文發表在哪個會議。
+Action 1: Search[ReAct Synergizing Reasoning and Acting]
+Observation 1: …ICLR 2023…
+Thought 2: 已找到答案。
+Action 2: Finish[ICLR 2023]</pre>
+<ul class="pts tight"><li class="pt"><span class="txt" data-ref="agent-loop:2">ReAct 在知識問答（HotpotQA）與事實查核（FEVER）中透過 Wikipedia API 查資料，減少了純推理時的幻覺與錯誤傳遞。</span> <a class="chip" href="#src" data-cite="S2" title="Yao et al.，〈ReAct: Synergizing Reasoning and Acting in Language Models〉，ICLR 2023">S2</a></li><li class="pt"><span class="txt" data-ref="agent-loop:3">在互動決策任務 ALFWorld 與 WebShop 上，ReAct 的成功率分別比模仿學習／強化學習方法高出 34% 與 10%（絕對值）。</span> <a class="chip" href="#src" data-cite="S2" title="Yao et al.，〈ReAct: Synergizing Reasoning and Acting in Language Models〉，ICLR 2023">S2</a></li></ul>
+</div><footer class="from">📖 Wiki 出處：agent-loop.md › 重點 2、3</footer></section>
+<section class="slide dense" data-wiki="planning:1,planning:2,planning:3" aria-label="第 9 頁"><p class="kicker">04 · 規劃</p><h2>規劃：把大目標拆成小步驟</h2>
+<ul class="pts"><li class="pt"><span class="txt" data-ref="planning:1"><b>思維鏈（Chain-of-Thought）：</b>在提示中示範中間推理步驟，能顯著提升 LLM 的複雜推理能力。</span> <a class="chip" href="#src" data-cite="S8" title="Wei et al.，〈Chain-of-Thought Prompting Elicits Reasoning in Large Language Models〉，NeurIPS 2022">S8</a></li><li class="pt"><span class="txt" data-ref="planning:2"><b>思維樹（Tree of Thoughts）：</b>同時探索多條推理路徑、自我評估並可回溯；在 24 點遊戲上，GPT-4 搭配 CoT 只解出 4%，ToT 達到 74%。</span> <a class="chip" href="#src" data-cite="S9" title="Yao et al.，〈Tree of Thoughts: Deliberate Problem Solving with Large Language Models〉，NeurIPS 2023">S9</a></li><li class="pt"><span class="txt" data-ref="planning:3"><b>任務拆解：</b>可以靠 LLM 提示（如「完成 X 需要哪些步驟？」）、任務專屬指令，或人類輸入來完成。</span> <a class="chip" href="#src" data-cite="S3" title="Lilian Weng，〈LLM Powered Autonomous Agents〉，2023-06">S3</a></li></ul>
+<table class="tbl" data-table="planning:1"><thead><tr><th>方式</th><th>特色</th><th>適合</th></tr></thead><tbody><tr><td>先規劃再執行（Plan-and-Execute）</td><td>一次列出完整步驟</td><td>步驟穩定的任務</td></tr><tr><td>邊做邊規劃（ReAct）</td><td>每步依觀察重新決定</td><td>資訊不完整、需探索 → 見 agent-loop</td></tr><tr><td>搜尋式規劃（ToT）</td><td>分支、評估、回溯</td><td>需要嘗試多種解法的難題</td></tr></tbody></table><footer class="from">📖 Wiki 出處：planning.md › 重點 1、2、3</footer></section>
+<section class="slide " data-wiki="planning:4,planning:5" aria-label="第 10 頁"><p class="kicker">04 · 規劃</p><h2>反思：從失敗中學習</h2>
+<div class="flow">
+ <div class="step">① 嘗試任務</div><div class="arr">→</div>
+ <div class="step">② 得到回饋<br><small>（測試失敗、評估者意見）</small></div><div class="arr">→</div>
+ <div class="step">③ 用文字寫下反思</div><div class="arr">→</div>
+ <div class="step">④ 存入記憶，下次讀取</div>
+</div>
+<ul class="pts big"><li class="pt"><span class="txt" data-ref="planning:4"><b>Reflexion：</b>Agent 用文字對任務回饋進行反思，把反思存進記憶，在下一次嘗試中改進，不需要更新模型權重。</span> <a class="chip" href="#src" data-cite="S4" title="Shinn et al.，〈Reflexion: Language Agents with Verbal Reinforcement Learning〉，NeurIPS 2023">S4</a></li><li class="pt"><span class="txt" data-ref="planning:5">Reflexion 在 HumanEval 程式題上達到 91% pass@1，高於當時 GPT-4 的 80%。</span> <a class="chip" href="#src" data-cite="S4" title="Shinn et al.，〈Reflexion: Language Agents with Verbal Reinforcement Learning〉，NeurIPS 2023">S4</a></li></ul><footer class="from">📖 Wiki 出處：planning.md › 重點 4、5</footer></section>
+<section class="slide " data-wiki="tool-use:1,tool-use:2,tool-use:4" aria-label="第 11 頁"><p class="kicker">05 · 工具使用</p><h2>工具：讓 Agent 從「會說」變成「會做」</h2>
+<ul class="pts"><li class="pt"><span class="txt" data-ref="tool-use:1">工具讓 LLM 取得權重裡沒有的資訊與能力，例如即時資訊、程式執行與專有資料。</span> <a class="chip" href="#src" data-cite="S3" title="Lilian Weng，〈LLM Powered Autonomous Agents〉，2023-06">S3</a></li><li class="pt"><span class="txt" data-ref="tool-use:2">Toolformer 證明 LM 可以用自我監督的方式學會「何時呼叫哪個 API、帶什麼參數」，工具包含計算機、問答系統、搜尋引擎、翻譯與行事曆。</span> <a class="chip" href="#src" data-cite="S6" title="Schick et al.，〈Toolformer: Language Models Can Teach Themselves to Use Tools〉，NeurIPS 2023">S6</a></li><li class="pt"><span class="txt" data-ref="tool-use:4">Model Context Protocol（MCP）是 2024 年 11 月發布的開放標準，讓 AI 應用以統一方式連接各種資料來源與工具。</span> <a class="chip" href="#src" data-cite="S12" title="Anthropic，〈Introducing the Model Context Protocol〉，2024-11">S12</a></li></ul><footer class="from">📖 Wiki 出處：tool-use.md › 重點 1、2、4</footer></section>
+<section class="slide " data-wiki="tool-use:3,tool-use:Function calling 的流程" aria-label="第 12 頁"><p class="kicker">05 · 工具使用</p><h2>Function calling 流程與好工具設計</h2>
+<div class="cols2">
+  <ol class="steps"><li data-fc="1">開發者把工具的「名稱、用途、參數格式」提供給模型。</li><li data-fc="2">模型判斷需要時，輸出一段結構化的工具呼叫例如 JSON。</li><li data-fc="3">程式真正執行工具，把結果當作 Observation 回傳給模型。</li><li data-fc="4">模型根據結果決定下一步。</li></ol>
+  <div><ul class="pts"><li class="pt"><span class="txt" data-ref="tool-use:3">工具的定義與說明文件要像寫給新進同事一樣清楚；Anthropic 稱之為「Agent–電腦介面（ACI）」，值得投入和人機介面一樣多的心力。</span> <a class="chip" href="#src" data-cite="S1" title="Anthropic（Schluntz &amp; Zhang），〈Building effective agents〉，2024-12">S1</a></li></ul>
+  <div class="callout">🛡️ 能動手就可能闖禍 → 工具權限要最小化（見「風險」）</div></div>
+</div><footer class="from">📖 Wiki 出處：tool-use.md › 重點 3、Function calling 的流程</footer></section>
+<section class="slide dense" data-wiki="memory:1,memory:2,memory:3" aria-label="第 13 頁"><p class="kicker">06 · 記憶</p><h2>記憶：短期靠上下文，長期靠外部儲存</h2>
+<div class="cols2">
+  <table class="tbl" data-table="memory:1"><thead><tr><th>記憶類型</th><th>人類類比</th><th>Agent 實作</th></tr></thead><tbody><tr><td>感官記憶</td><td>一瞬間的印象</td><td>輸入的原始內容</td></tr><tr><td>短期／工作記憶</td><td>正在想的事</td><td>上下文視窗（對話、工具結果）</td></tr><tr><td>長期記憶</td><td>筆記本、經驗</td><td>向量資料庫、檔案、摘要</td></tr></tbody></table>
+  <ul class="pts tight"><li class="pt"><span class="txt" data-ref="memory:1">短期記憶＝上下文中的內容（in-context learning）；長期記憶＝存在外部（常用向量資料庫），以快速檢索取用。</span> <a class="chip" href="#src" data-cite="S3" title="Lilian Weng，〈LLM Powered Autonomous Agents〉，2023-06">S3</a></li><li class="pt"><span class="txt" data-ref="memory:2">Generative Agents 用「記憶流」記錄所有經驗，依「新近度、重要性、相關性」檢索，並把記憶綜合成更高層的「反思」。</span> <a class="chip" href="#src" data-cite="S5" title="Park et al.，〈Generative Agents: Interactive Simulacra of Human Behavior〉，UIST 2023">S5</a></li><li class="pt"><span class="txt" data-ref="memory:3">MemGPT 借鏡作業系統的分層記憶，在有限的主上下文與外部儲存之間搬移資料，讓 LLM 處理超出上下文長度的內容。</span> <a class="chip" href="#src" data-cite="S7" title="Packer et al.，〈MemGPT: Towards LLMs as Operating Systems〉，2023">S7</a></li></ul>
+</div><footer class="from">📖 Wiki 出處：memory.md › 重點 1、2、3</footer></section>
+<section class="slide dense" data-wiki="workflows-vs-agents:2,workflows-vs-agents:3,workflows-vs-agents:4,workflows-vs-agents:5,workflows-vs-agents:6" aria-label="第 14 頁"><p class="kicker">07 · 設計模式</p><h2>不一定要 Agent：五種常見模式</h2>
+<div class="cards"><div class="card c0"><div class="ct">提示鏈</div><ul class="pts"><li class="pt mini"><span class="txt" data-ref="workflows-vs-agents:2"><b>提示鏈（Prompt chaining）：</b>把任務拆成固定的連續步驟，每一步處理上一步的輸出，中間可加檢查關卡。</span> <a class="chip" href="#src" data-cite="S1" title="Anthropic（Schluntz &amp; Zhang），〈Building effective agents〉，2024-12">S1</a></li></ul></div><div class="card c1"><div class="ct">路由</div><ul class="pts"><li class="pt mini"><span class="txt" data-ref="workflows-vs-agents:3"><b>路由（Routing）：</b>先分類輸入，再交給專門的後續流程處理。</span> <a class="chip" href="#src" data-cite="S1" title="Anthropic（Schluntz &amp; Zhang），〈Building effective agents〉，2024-12">S1</a></li></ul></div><div class="card c2"><div class="ct">平行化</div><ul class="pts"><li class="pt mini"><span class="txt" data-ref="workflows-vs-agents:4"><b>平行化（Parallelization）：</b>把任務切段同時處理（分段），或同一任務跑多次再投票（投票）。</span> <a class="chip" href="#src" data-cite="S1" title="Anthropic（Schluntz &amp; Zhang），〈Building effective agents〉，2024-12">S1</a></li></ul></div><div class="card c3"><div class="ct">協調者－工作者</div><ul class="pts"><li class="pt mini"><span class="txt" data-ref="workflows-vs-agents:5">協調者－工作者（Orchestrator-workers）：中央 LLM 動態拆解任務、分派給工作者 LLM，再整合結果。</span> <a class="chip" href="#src" data-cite="S1" title="Anthropic（Schluntz &amp; Zhang），〈Building effective agents〉，2024-12">S1</a></li></ul></div><div class="card c4"><div class="ct">評估者－最佳化者</div><ul class="pts"><li class="pt mini"><span class="txt" data-ref="workflows-vs-agents:6">評估者－最佳化者（Evaluator-optimizer）：一個 LLM 產生答案，另一個 LLM 評估並給回饋，反覆迭代。</span> <a class="chip" href="#src" data-cite="S1" title="Anthropic（Schluntz &amp; Zhang），〈Building effective agents〉，2024-12">S1</a></li></ul></div></div><footer class="from">📖 Wiki 出處：workflows-vs-agents.md › 重點 2、3、4、5、6</footer></section>
+<section class="slide " data-wiki="workflows-vs-agents:決策指南,workflows-vs-agents:Graph 與 Loop" aria-label="第 15 頁"><p class="kicker">07 · 設計模式</p><h2>什麼時候該用 Agent？</h2>
+<div class="cols2">
+<pre class="code" data-code="workflows-vs-agents:1">任務步驟能事先寫死嗎？
+ ├─ 能 → 用 Workflow（提示鏈／路由／平行化）
+ └─ 不能，需要依結果決定下一步
+       ├─ 有明確評估標準 → 評估者－最佳化者
+       ├─ 子任務無法預先知道 → 協調者－工作者
+       └─ 開放式、多步、需工具 → Agent（Agent 迴圈）</pre>
+<div class="gl">
+  <div class="glc"><b>Workflow ＝ 圖（graph）</b><span>節點與邊由開發者事先定義</span></div>
+  <div class="glc"><b>Agent ＝ 迴圈（loop）</b><span>每一輪由模型決定下一個動作</span></div>
+  <div class="glc"><b>實務常是混合</b><span>外層是圖，某些節點內部是 Agent 迴圈</span></div>
+</div></div><footer class="from">📖 Wiki 出處：workflows-vs-agents.md › 重點 決策指南、Graph 與 Loop</footer></section>
+<section class="slide dense" data-wiki="multi-agent:1,multi-agent:2,multi-agent:3" aria-label="第 16 頁"><p class="kicker">08 · 多代理人</p><h2>多代理人：分工、對話、互相檢查</h2>
+<ul class="pts"><li class="pt"><span class="txt" data-ref="multi-agent:1">AutoGen 讓多個可對話的 Agent 透過互相傳訊合作完成任務，Agent 可結合 LLM、人類輸入與工具。</span> <a class="chip" href="#src" data-cite="S10" title="Wu et al.，〈AutoGen: Enabling Next-Gen LLM Applications via Multi-Agent Conversation〉，2023">S10</a></li><li class="pt"><span class="txt" data-ref="multi-agent:2">Generative Agents 在沙盒小鎮中放入 25 個 Agent，它們會自發地互相傳遞消息、結交朋友並協調活動（例如籌辦情人節派對）。</span> <a class="chip" href="#src" data-cite="S5" title="Park et al.，〈Generative Agents: Interactive Simulacra of Human Behavior〉，UIST 2023">S5</a></li><li class="pt"><span class="txt" data-ref="multi-agent:3">協調者－工作者模式中，中央 LLM 動態拆解任務並分派給多個工作者，是常見的多代理人架構。</span> <a class="chip" href="#src" data-cite="S1" title="Anthropic（Schluntz &amp; Zhang），〈Building effective agents〉，2024-12">S1</a></li></ul>
+<table class="tbl" data-table="multi-agent:1"><thead><tr><th>架構</th><th>說明</th><th>例子</th></tr></thead><tbody><tr><td>協調者－工作者</td><td>一個主管 Agent 分派、彙整</td><td>研究助理派出多個搜尋 Agent</td></tr><tr><td>角色分工對話</td><td>每個 Agent 有固定角色互相對話</td><td>「寫程式」與「審程式」兩個 Agent</td></tr><tr><td>辯論／投票</td><td>多個 Agent 各自作答後比較</td><td>對同一題取多數決（對應 workflows-vs-agents 的投票）</td></tr></tbody></table><footer class="from">📖 Wiki 出處：multi-agent.md › 重點 1、2、3</footer></section>
+<section class="slide " data-wiki="evaluation:1,evaluation:2,evaluation:3,evaluation:4" aria-label="第 17 頁"><p class="kicker">09 · 評估</p><h2>評估：不只看答案，要看有沒有真的做完</h2>
+<div class="cols2">
+  <div class="stat"><div class="num">2,294</div><div class="cap">SWE-bench 題目數</div><div class="num">1.96%</div><div class="cap">發表時最佳模型解題率</div></div>
+  <ul class="pts tight"><li class="pt"><span class="txt" data-ref="evaluation:1">SWE-bench 從 12 個熱門 Python 專案的真實 GitHub issue 與 PR 中整理出 2,294 個題目，要求模型修改程式碼來解決問題。</span> <a class="chip" href="#src" data-cite="S11" title="Jimenez et al.，〈SWE-bench: Can Language Models Resolve Real-World GitHub Issues?〉，ICLR 2024">S11</a></li><li class="pt"><span class="txt" data-ref="evaluation:2">SWE-bench 發表時，表現最好的 Claude 2 只解出 1.96% 的題目，顯示真實軟體任務對 Agent 仍然困難。</span> <a class="chip" href="#src" data-cite="S11" title="Jimenez et al.，〈SWE-bench: Can Language Models Resolve Real-World GitHub Issues?〉，ICLR 2024">S11</a></li><li class="pt"><span class="txt" data-ref="evaluation:3">部署前應在沙盒環境中大量測試，並設置適當的防護機制。</span> <a class="chip" href="#src" data-cite="S1" title="Anthropic（Schluntz &amp; Zhang），〈Building effective agents〉，2024-12">S1</a></li><li class="pt"><span class="txt" data-ref="evaluation:4">能以客觀方式驗證結果的任務（例如程式可以跑測試）特別適合 Agent，因為回饋可以直接用來迭代。</span> <a class="chip" href="#src" data-cite="S1" title="Anthropic（Schluntz &amp; Zhang），〈Building effective agents〉，2024-12">S1</a></li></ul>
+</div><footer class="from">📖 Wiki 出處：evaluation.md › 重點 1、2、3、4</footer></section>
+<section class="slide " data-wiki="risks:1,risks:2,risks:3,risks:4,risks:5" aria-label="第 18 頁"><p class="kicker">10 · 風險與防護</p><h2>風險：能自主行動，代價也更高</h2>
+<div class="cols2">
+  <ul class="pts tight"><li class="pt"><span class="txt" data-ref="risks:1">提示注入（Prompt Injection）名列 OWASP LLM 應用十大風險第一名（LLM01），惡意指令可能藏在 Agent 讀到的網頁或文件中。</span> <a class="chip" href="#src" data-cite="S13" title="OWASP，〈Top 10 for LLM Applications 2025〉">S13</a></li><li class="pt"><span class="txt" data-ref="risks:2">過度授權（Excessive Agency，LLM06）：給 Agent 過多功能、權限或自主性，可能導致有害的行動。</span> <a class="chip" href="#src" data-cite="S13" title="OWASP，〈Top 10 for LLM Applications 2025〉">S13</a></li><li class="pt"><span class="txt" data-ref="risks:3">無上限消耗（Unbounded Consumption，LLM10）：缺乏限制時，迴圈或大量請求可能造成成本與資源失控。</span> <a class="chip" href="#src" data-cite="S13" title="OWASP，〈Top 10 for LLM Applications 2025〉">S13</a></li></ul>
+  <ul class="pts tight"><li class="pt"><span class="txt" data-ref="risks:4">Agent 的自主性意味著更高成本與錯誤累積的可能，需在沙盒中測試並設置防護。</span> <a class="chip" href="#src" data-cite="S1" title="Anthropic（Schluntz &amp; Zhang），〈Building effective agents〉，2024-12">S1</a></li><li class="pt"><span class="txt" data-ref="risks:5">對重要步驟設置人類檢查點，讓 Agent 在關鍵時刻暫停並取得人類回饋。</span> <a class="chip" href="#src" data-cite="S1" title="Anthropic（Schluntz &amp; Zhang），〈Building effective agents〉，2024-12">S1</a></li></ul>
+</div><footer class="from">📖 Wiki 出處：risks.md › 重點 1、2、3、4、5</footer></section>
+<section class="slide " data-wiki="definition:3,agent-loop:1,agent-loop:5,risks:1" aria-label="第 19 頁"><p class="kicker">複習</p><h2>小測驗（點題目看答案）</h2><div class="quiz"><details class="q"><summary>Q1. Agent 與 Workflow 最大的差別是什麼？</summary><ul class="pts"><li class="pt"><span class="txt" data-ref="definition:3"><b>與 Workflow 的差別：</b>Workflow 是由程式碼預先寫好路徑來串接 LLM 與工具；Agent 則是由模型在執行中決定下一步。</span> <a class="chip" href="#src" data-cite="S1" title="Anthropic（Schluntz &amp; Zhang），〈Building effective agents〉，2024-12">S1</a></li></ul></details><details class="q"><summary>Q2. ReAct 迴圈的三個步驟是？</summary><ul class="pts"><li class="pt"><span class="txt" data-ref="agent-loop:1">ReAct 讓 LLM 交錯產生「推理軌跡」與「任務行動」，推理幫助擬定與更新計畫，行動則從外部取得新資訊。</span> <a class="chip" href="#src" data-cite="S2" title="Yao et al.，〈ReAct: Synergizing Reasoning and Acting in Language Models〉，ICLR 2023">S2</a></li></ul></details><details class="q"><summary>Q3. 為什麼 Agent 一定要設定停止條件？</summary><ul class="pts"><li class="pt"><span class="txt" data-ref="agent-loop:5">必須設定停止條件（例如最大迭代次數），避免 Agent 無限循環。</span> <a class="chip" href="#src" data-cite="S1" title="Anthropic（Schluntz &amp; Zhang），〈Building effective agents〉，2024-12">S1</a></li></ul></details><details class="q"><summary>Q4. OWASP 把哪一種風險列為 LLM 應用第一名？</summary><ul class="pts"><li class="pt"><span class="txt" data-ref="risks:1">提示注入（Prompt Injection）名列 OWASP LLM 應用十大風險第一名（LLM01），惡意指令可能藏在 Agent 讀到的網頁或文件中。</span> <a class="chip" href="#src" data-cite="S13" title="OWASP，〈Top 10 for LLM Applications 2025〉">S13</a></li></ul></details></div><footer class="from">📖 Wiki 出處：definition.md › 重點 3　agent-loop.md › 重點 1、5　risks.md › 重點 1</footer></section>
+<section class="slide s-cover" data-wiki="definition:摘要,agent-loop:摘要,workflows-vs-agents:摘要" aria-label="第 20 頁"><div class="cover">
+<p class="kicker">總結</p><h2>帶走三件事</h2>
+<ol class="takeaway">
+<li><span data-sum="definition">Agent 是能感知環境並採取行動以達成目標的系統；LLM Agent 則是由大型語言模型「自己決定流程與工具使用」的系統。</span></li>
+<li><span data-sum="agent-loop">Agent 的核心是一個迴圈：思考（Thought）→ 行動（Action）→ 觀察（Observation），重複直到完成或觸發停止條件。</span></li>
+<li><span data-sum="workflows-vs-agents">不是所有 LLM 應用都需要 Agent。先用最簡單的方案，只有在真的需要時才增加複雜度。</span></li>
+</ol></div><footer class="from">📖 Wiki 出處：definition.md › 重點 摘要　agent-loop.md › 重點 摘要　workflows-vs-agents.md › 重點 摘要</footer></section>
+<section class="slide dense" data-wiki="sources:全部" aria-label="第 21 頁"><p class="kicker">參考</p><h2 id="src">參考來源</h2><ol class="srcs"><li id="src-S1"><b>S1</b> Anthropic（Schluntz &amp; Zhang），〈Building effective agents〉，2024-12 <a href="https://www.anthropic.com/engineering/building-effective-agents" target="_blank" rel="noopener">連結</a></li><li id="src-S2"><b>S2</b> Yao et al.，〈ReAct: Synergizing Reasoning and Acting in Language Models〉，ICLR 2023 <a href="https://arxiv.org/abs/2210.03629" target="_blank" rel="noopener">連結</a></li><li id="src-S3"><b>S3</b> Lilian Weng，〈LLM Powered Autonomous Agents〉，2023-06 <a href="https://lilianweng.github.io/posts/2023-06-23-agent/" target="_blank" rel="noopener">連結</a></li><li id="src-S4"><b>S4</b> Shinn et al.，〈Reflexion: Language Agents with Verbal Reinforcement Learning〉，NeurIPS 2023 <a href="https://arxiv.org/abs/2303.11366" target="_blank" rel="noopener">連結</a></li><li id="src-S5"><b>S5</b> Park et al.，〈Generative Agents: Interactive Simulacra of Human Behavior〉，UIST 2023 <a href="https://arxiv.org/abs/2304.03442" target="_blank" rel="noopener">連結</a></li><li id="src-S6"><b>S6</b> Schick et al.，〈Toolformer: Language Models Can Teach Themselves to Use Tools〉，NeurIPS 2023 <a href="https://arxiv.org/abs/2302.04761" target="_blank" rel="noopener">連結</a></li><li id="src-S7"><b>S7</b> Packer et al.，〈MemGPT: Towards LLMs as Operating Systems〉，2023 <a href="https://arxiv.org/abs/2310.08560" target="_blank" rel="noopener">連結</a></li><li id="src-S8"><b>S8</b> Wei et al.，〈Chain-of-Thought Prompting Elicits Reasoning in Large Language Models〉，NeurIPS 2022 <a href="https://arxiv.org/abs/2201.11903" target="_blank" rel="noopener">連結</a></li><li id="src-S9"><b>S9</b> Yao et al.，〈Tree of Thoughts: Deliberate Problem Solving with Large Language Models〉，NeurIPS 2023 <a href="https://arxiv.org/abs/2305.10601" target="_blank" rel="noopener">連結</a></li><li id="src-S10"><b>S10</b> Wu et al.，〈AutoGen: Enabling Next-Gen LLM Applications via Multi-Agent Conversation〉，2023 <a href="https://arxiv.org/abs/2308.08155" target="_blank" rel="noopener">連結</a></li><li id="src-S11"><b>S11</b> Jimenez et al.，〈SWE-bench: Can Language Models Resolve Real-World GitHub Issues?〉，ICLR 2024 <a href="https://arxiv.org/abs/2310.06770" target="_blank" rel="noopener">連結</a></li><li id="src-S12"><b>S12</b> Anthropic，〈Introducing the Model Context Protocol〉，2024-11 <a href="https://www.anthropic.com/news/model-context-protocol" target="_blank" rel="noopener">連結</a></li><li id="src-S13"><b>S13</b> OWASP，〈Top 10 for LLM Applications 2025〉 <a href="https://genai.owasp.org/llm-top-10/" target="_blank" rel="noopener">連結</a></li><li id="src-S14"><b>S14</b> Russell &amp; Norvig，《Artificial Intelligence: A Modern Approach》第 4 版，2020</li><li id="src-S15"><b>S15</b> Wang et al.，〈A Survey on Large Language Model based Autonomous Agents〉，Frontiers of Computer Science，2024 <a href="https://arxiv.org/abs/2308.11432" target="_blank" rel="noopener">連結</a></li><li id="src-S16"><b>S16</b> Liu et al.，〈AgentBench: Evaluating LLMs as Agents〉，ICLR 2024 <a href="https://arxiv.org/abs/2308.03688" target="_blank" rel="noopener">連結</a></li><li id="src-S17"><b>S17</b> Greshake et al.，〈Not what you&#x27;ve signed up for: Compromising Real-World LLM-Integrated Applications with Indirect Prompt Injection〉，2023 <a href="https://arxiv.org/abs/2302.12173" target="_blank" rel="noopener">連結</a></li><li id="src-S18"><b>S18</b> Yang et al.，〈SWE-agent: Agent-Computer Interfaces Enable Automated Software Engineering〉，2024 <a href="https://arxiv.org/abs/2405.15793" target="_blank" rel="noopener">連結</a></li><li id="src-S19"><b>S19</b> Hong et al.，〈MetaGPT: Meta Programming for A Multi-Agent Collaborative Framework〉，2023 <a href="https://arxiv.org/abs/2308.00352" target="_blank" rel="noopener">連結</a></li></ol><footer class="from">📖 Wiki 出處：sources.md › 重點 全部</footer></section>
+</div></div>
+<nav id="bar"><button id="prev" aria-label="上一頁">‹</button><span id="count"></span><button id="next" aria-label="下一頁">›</button><button id="ov" aria-label="總覽">▦</button></nav>
+<div id="progress"><i></i></div>
+<script>(function(){
+  const slides=[...document.querySelectorAll('.slide')], stage=document.getElementById('stage');
+  const count=document.getElementById('count'), bar=document.querySelector('#progress i');
+  let cur=0;
+  function fit(){ if(document.body.classList.contains('overview'))return;
+    const s=Math.min(innerWidth/1300, innerHeight/740); stage.style.transform='scale('+s+')'; }
+  function show(i){ cur=Math.max(0,Math.min(slides.length-1,i));
+    slides.forEach((s,k)=>s.classList.toggle('active',k===cur));
+    count.textContent=(cur+1)+' / '+slides.length; bar.style.width=((cur+1)/slides.length*100)+'%';
+    if(location.hash!=='#'+(cur+1)) history.replaceState(null,'','#'+(cur+1)); }
+  function toggleOverview(){ const on=document.body.classList.toggle('overview');
+    if(on){stage.style.transform='none';} else {fit(); show(cur);} }
+  document.addEventListener('keydown',e=>{
+    if(e.key==='ArrowRight'||e.key==='PageDown'||e.key===' '){e.preventDefault();show(cur+1);}
+    else if(e.key==='ArrowLeft'||e.key==='PageUp'){e.preventDefault();show(cur-1);}
+    else if(e.key==='Home')show(0); else if(e.key==='End')show(slides.length-1);
+    else if(e.key==='o'||e.key==='O')toggleOverview();
+    else if(e.key==='f'||e.key==='F'){document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen();}
+    else if(e.key==='Escape'&&document.body.classList.contains('overview'))toggleOverview();
+  });
+  document.getElementById('prev').onclick=()=>show(cur-1);
+  document.getElementById('next').onclick=()=>show(cur+1);
+  document.getElementById('ov').onclick=toggleOverview;
+  slides.forEach((s,k)=>s.addEventListener('click',()=>{ if(document.body.classList.contains('overview')){toggleOverview();show(k);} }));
+  document.querySelectorAll('a[href="#src"]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();show(slides.length-1);}));
+  let x0=null; addEventListener('touchstart',e=>{x0=e.touches[0].clientX},{passive:true});
+  addEventListener('touchend',e=>{ if(x0===null)return; const dx=e.changedTouches[0].clientX-x0; if(Math.abs(dx)>50)show(cur+(dx<0?1:-1)); x0=null; });
+  addEventListener('resize',fit);
+  const h=parseInt(location.hash.slice(1)); fit(); show(isNaN(h)?0:h-1);
+})();
+</script>
+</body></html>
